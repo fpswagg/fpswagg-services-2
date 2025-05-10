@@ -1,0 +1,6 @@
+-- AlterTable
+ALTER TABLE "Task" ALTER COLUMN "works" SET DEFAULT ARRAY[]::JSONB[];
+
+-- AlterTable
+ALTER TABLE "TelegramBot" ALTER COLUMN "init_data" SET DEFAULT ARRAY[]::JSONB[],
+ALTER COLUMN "data" SET DEFAULT ARRAY[]::JSONB[];
