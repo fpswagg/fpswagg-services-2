@@ -7,6 +7,12 @@ datasource db {
   url = env("DATABASE_URL")
 }
 
+model Token {
+  token String @id
+  accountUid String
+  expiryDate DateTime?
+}
+
 model Scheduler {
   id String @id
   detailedName String

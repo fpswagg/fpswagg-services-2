@@ -1,1 +1,2 @@
-GET http://localhost:3000/schedulers
+GET http://localhost:3000/fetcher/redgifs/gifs?niche=ebony
+Authorization: Admin admin

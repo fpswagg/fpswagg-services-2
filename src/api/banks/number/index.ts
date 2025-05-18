@@ -1,19 +1,24 @@
-import { JsonValue } from "@prisma/client/runtime/library";
+import { JsonValue } from '@prisma/client/runtime/library';
 
-import db from "src/database";
-import { NumberRecord, NumberPost } from "src/types";
+import db from 'src/utils/database';
+import { NumberRecord, NumberPost } from 'src/utils/types';
 
 export default class NumberBank {
     private static _instance: NumberBank | null = null;
 
     public static get instance() {
-        if (!this._instance)
-            this._instance = new NumberBank();
+        if (!this._instance) this._instance = new NumberBank();
 
         return this._instance;
     }
 
-    async push(number: string, source: string | null = null, saved_as: string | null = null, reason: string | null = null, ...keywords: string[]) {
+    async push(
+        number: string,
+        source: string | null = null,
+        saved_as: string | null = null,
+        reason: string | null = null,
+        ...keywords: string[]
+    ) {
         const data = { id: number, source, saved_as, reason, keywords } as NumberRecord;
 
         return turnRecordFromDB(await createNumber(data))!;
@@ -25,11 +30,10 @@ export default class NumberBank {
         return turnRecordFromDB(data);
     }
 
-    async update(number: string, updateData: Omit<Partial<NumberRecord>, "id">): Promise<NumberRecord> {
+    async update(number: string, updateData: Omit<Partial<NumberRecord>, 'id'>): Promise<NumberRecord> {
         const data = await updateNumber(number, updateData);
 
-        if (!data)
-            throw new Error("An error occured! It might be a wrong id!");
+        if (!data) throw new Error('An error occured! It might be a wrong id!');
 
         return turnRecordFromDB(data)!;
     }
@@ -37,15 +41,14 @@ export default class NumberBank {
     async delete(number: string): Promise<NumberRecord> {
         let data: NumberRecord | null = null;
 
-        if ((data = await this.get(number)) === null)
-            throw new Error("Wrong id.");
+        if ((data = await this.get(number)) === null) throw new Error('Wrong id.');
 
         await deleteNumber(number);
 
         return data;
     }
 
-    async pushPost(post: Omit<NumberPost, "id">) {
+    async pushPost(post: Omit<NumberPost, 'id'>) {
         return turnPostFromDB(await createPost(post))!;
     }
 
@@ -55,11 +58,10 @@ export default class NumberBank {
         return turnPostFromDB(data);
     }
 
-    async updatePost(id: number, updateData: Omit<Partial<NumberPost>, "id">): Promise<NumberPost> {
+    async updatePost(id: number, updateData: Omit<Partial<NumberPost>, 'id'>): Promise<NumberPost> {
         const data = await updatePost(id, updateData);
 
-        if (!data)
-            throw new Error("An error occured! It might be a wrong id!");
+        if (!data) throw new Error('An error occured! It might be a wrong id!');
 
         return turnPostFromDB(data)!;
     }
@@ -67,8 +69,7 @@ export default class NumberBank {
     async deletePost(id: number) {
         let data: NumberPost | null = null;
 
-        if ((data = await this.getPost(id)) === null)
-            throw new Error("Wrong id.");
+        if ((data = await this.getPost(id)) === null) throw new Error('Wrong id.');
 
         await deletePost(id);
 
@@ -96,19 +97,23 @@ export type NumberPostDB = {
 };
 
 export function turnRecordFromDB(data: NumberRecordDB | null): NumberRecord | null {
-    return data && { 
-        ...data, 
-        saved_as: data.saved_as || undefined, 
-        reason: data.reason || undefined, 
-        discussionFrequency: data.discussionFrequency ?? undefined 
-    };
+    return (
+        data && {
+            ...data,
+            saved_as: data.saved_as || undefined,
+            reason: data.reason || undefined,
+            discussionFrequency: data.discussionFrequency ?? undefined,
+        }
+    );
 }
 
 export function turnPostFromDB(data: NumberPostDB | null): NumberPost | null {
-    return data && { 
-        ...data, 
-        content: (typeof data.content === "object" && data.content) || {},
-    };
+    return (
+        data && {
+            ...data,
+            content: (typeof data.content === 'object' && data.content) || {},
+        }
+    );
 }
 
 export async function createNumber(numberRecord: NumberRecord) {
@@ -119,7 +124,7 @@ export async function getNumber(id: string) {
     return await db.numberRecord.findUnique({ where: { id }, include: { posts: true } });
 }
 
-export async function updateNumber(id: string, data: Omit<Partial<NumberRecord>, "id">) {
+export async function updateNumber(id: string, data: Omit<Partial<NumberRecord>, 'id'>) {
     return await db.numberRecord.update({ where: { id }, data, include: { posts: true } });
 }
 
@@ -128,7 +133,7 @@ export async function deleteNumber(id: string) {
     await db.numberRecord.delete({ where: { id } });
 }
 
-export async function createPost(post: Omit<NumberPost, "id">) {
+export async function createPost(post: Omit<NumberPost, 'id'>) {
     return await db.numberPost.create({ data: post, include: { number: true } });
 }
 
@@ -148,11 +153,11 @@ export async function getPostsByNumber(number_id: string) {
     return await db.numberPost.findMany({ where: { number_id }, include: { number: true } });
 }
 
-export async function updatePost(id: number, data: Omit<Partial<NumberPost>, "id">) {
+export async function updatePost(id: number, data: Omit<Partial<NumberPost>, 'id'>) {
     return await db.numberPost.update({ where: { id }, data, include: { number: true } });
 }
 
-export async function updatePosts(number_id: string, data: Omit<Partial<NumberPost>, "id">) {
+export async function updatePosts(number_id: string, data: Omit<Partial<NumberPost>, 'id'>) {
     return await db.numberPost.updateMany({ where: { number_id }, data });
 }
 
@@ -161,8 +166,7 @@ export async function deletePost(id: number) {
 }
 
 export async function clearPosts(number_id?: string) {
-    if (number_id === undefined)
-        return await db.numberPost.deleteMany();
+    if (number_id === undefined) return await db.numberPost.deleteMany();
     else
         return await db.numberPost.deleteMany({
             where: { number_id },

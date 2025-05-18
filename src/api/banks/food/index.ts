@@ -1,15 +1,14 @@
-import axios from "axios";
+import axios from 'axios';
 
-import db from "src/database";
-import { RawMeal, Meal, Ingredient } from "src/types";
-import { parseMeal } from "src/functions";
+import db from 'src/utils/database';
+import { RawMeal, Meal, Ingredient } from 'src/utils/types';
+import { parseMeal } from 'src/utils/functions';
 
 export default class FoodBank {
     private static _instance: FoodBank | null = null;
 
     public static get instance() {
-        if (!this._instance)
-            this._instance = new FoodBank();
+        if (!this._instance) this._instance = new FoodBank();
 
         return this._instance;
     }
@@ -20,36 +19,31 @@ export default class FoodBank {
 
     async generate() {
         let meal: Meal | null = null;
-        
+
         for (let count = 0; count <= 100; count++) {
             meal = await this.random();
 
-            if (!(await this.get(meal.id)))
-                break;
-            
+            if (!(await this.get(meal.id))) break;
+
             meal = null;
         }
 
-        if (!meal)
-            throw new Error("Very low available recipes.");
+        if (!meal) throw new Error('Very low available recipes.');
 
         return await this.push(meal);
     }
-    
+
     async push(meal: Meal) {
-        while(true) {
+        while (true) {
             const dbEquivalent = await getMealById(meal.id);
-        
+
             const lastModified = meal.dateModified ? new Date(meal.dateModified) : undefined;
             const dbLastModified = dbEquivalent?.dateModified || undefined;
 
-            if (dbEquivalent && lastModified?.getTime() === dbLastModified?.getTime())
-                continue;
+            if (dbEquivalent && lastModified?.getTime() === dbLastModified?.getTime()) continue;
 
-            if (dbEquivalent)
-                return await updateMeal(meal.id, meal);
-            else
-                return await createMeal(meal);
+            if (dbEquivalent) return await updateMeal(meal.id, meal);
+            else return await createMeal(meal);
         }
     }
 
@@ -62,8 +56,7 @@ export default class FoodBank {
     async delete(id: string): Promise<Meal> {
         let meal: Meal | null = null;
 
-        if ((meal = await this.get(id)) === null)
-            throw new Error("Wrong id.");
+        if ((meal = await this.get(id)) === null) throw new Error('Wrong id.');
 
         await deleteMeal(id);
 
@@ -72,7 +65,7 @@ export default class FoodBank {
 }
 
 export async function themealdbRandom() {
-    const response = await axios.get<{ meals: RawMeal[] }>("https://www.themealdb.com/api/json/v1/1/random.php");
+    const response = await axios.get<{ meals: RawMeal[] }>('https://www.themealdb.com/api/json/v1/1/random.php');
     const meal = response.data.meals[0];
 
     return parseMeal(meal);
@@ -83,11 +76,11 @@ export async function createMeal(meal: Meal) {
         data: {
             ...meal,
             dateModified: meal.dateModified ? new Date(meal.dateModified) : null,
-            ingredients: { create: meal.ingredients }
+            ingredients: { create: meal.ingredients },
         },
-        include: { ingredients: true }
+        include: { ingredients: true },
     });
-} 
+}
 
 export async function getMealById(id: string) {
     return await db.meal.findUnique({
@@ -96,7 +89,7 @@ export async function getMealById(id: string) {
     });
 }
 
-export async function updateMeal(id: string, meal: Omit<Partial<Meal>, "id">) {
+export async function updateMeal(id: string, meal: Omit<Partial<Meal>, 'id'>) {
     const { ingredients, ...mealData } = meal;
 
     return await db.meal.update({
@@ -105,9 +98,10 @@ export async function updateMeal(id: string, meal: Omit<Partial<Meal>, "id">) {
             ...mealData,
             ingredients: ingredients
                 ? {
-                    deleteMany: {},
-                    create: ingredients,
-                } : undefined,
+                      deleteMany: {},
+                      create: ingredients,
+                  }
+                : undefined,
         },
         include: { ingredients: true },
     });
@@ -124,7 +118,7 @@ export async function createIngredient(ingredient: Ingredient, mealId: string) {
             ...ingredient,
             mealId,
         },
-        include: { meal: true }
+        include: { meal: true },
     });
 }
 
@@ -154,14 +148,13 @@ export async function updateIngredients(mealId: string, data: Partial<Ingredient
 
 export async function deleteIngredient(id: number) {
     return await db.ingredient.delete({
-        where: { id }, 
+        where: { id },
         include: { meal: true },
     });
 }
 
 export async function clearIngredients(mealId?: string) {
-    if (mealId === undefined)
-        return await db.ingredient.deleteMany();
+    if (mealId === undefined) return await db.ingredient.deleteMany();
     else
         return await db.ingredient.deleteMany({
             where: { mealId },

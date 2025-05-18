@@ -1,3 +1,11 @@
+import { Request } from 'express';
+import { User } from '@supabase/supabase-js';
+
+export interface AppRequest extends Request {
+    user?: User;
+    admin: boolean;
+}
+
 export type EMPTY = null | undefined;
 
 export interface Scheduler {
@@ -52,7 +60,7 @@ export interface Meal {
     imageSource: string | null;
     creativeCommonsConfirmed: string | null;
     dateModified: Date | null;
-};
+}
 
 export interface Ingredient {
     ingredient: string;
@@ -113,10 +121,10 @@ export interface RawMeal {
     strImageSource: string | null;
     strCreativeCommonsConfirmed: string | null;
     dateModified: string | null;
-};
+}
 
-export type IddgafPostType = "telegram" | "whatsapp";
-export type IddgafPostContentType = "link";
+export type IddgafPostType = 'telegram' | 'whatsapp';
+export type IddgafPostContentType = 'link';
 
 export interface IddgafPost {
     id: number;
@@ -130,9 +138,9 @@ export interface IddgafPost {
 
 export interface RedditGalleryData {
     items: {
-        media_id: string, 
-        id: number
-    }[]
+        media_id: string;
+        id: number;
+    }[];
 }
 
 export interface RedditMediaMetadata {
@@ -287,27 +295,27 @@ export type RedgifUrlData = {
     gif?: string;
 };
 
-export interface JSearchSearchParam { 
-    query: string, 
-    page?: number, 
-    num_pages?: number, 
-    country?: iso3166_1_alpha_2_lwr, 
-    date_posted?: 'all' | 'today' | '3days' | 'week' | 'month', 
-    work_from_home?: boolean,
-    employment_types?: string,
-    job_requirements?: string,
-    radius?: number,
-    exclude_job_publishers?: string,
-    fields?: string,
-    language?: iso639_language_codes
-};
+export interface JSearchSearchParam {
+    query: string;
+    page?: number;
+    num_pages?: number;
+    country?: iso3166_1_alpha_2_lwr;
+    date_posted?: 'all' | 'today' | '3days' | 'week' | 'month';
+    work_from_home?: boolean;
+    employment_types?: string;
+    job_requirements?: string;
+    radius?: number;
+    exclude_job_publishers?: string;
+    fields?: string;
+    language?: iso639_language_codes;
+}
 
-export interface JSearchDetailsParam { 
-    job_id: string,
-    country?: iso3166_1_alpha_2_lwr, 
-    fields?: string,
-    language?: iso639_language_codes
-};
+export interface JSearchDetailsParam {
+    job_id: string;
+    country?: iso3166_1_alpha_2_lwr;
+    fields?: string;
+    language?: iso639_language_codes;
+}
 
 export interface JSearchJobDetails {
     job_id: string;
@@ -388,33 +396,465 @@ export interface JSearchJobData {
     job_occupational_categories: string | null;
     job_naics_code: string | null;
     job_naics_name: string | null;
-};
+}
 
 export interface JSearchApplyOption {
     publisher: string;
     apply_link: string;
     is_direct: boolean;
-};
+}
 
 export interface JSearchJobRequiredExperience {
     no_experience_required: boolean;
     required_experience_in_months: number | null;
     experience_mentioned: boolean;
     experience_preferred: boolean;
-};
+}
 
 export interface JSearchJobHighlights {
     Qualifications: string[];
     Responsibilities: string[];
     Benefits?: string[];
-};
+}
 
 export type CriteriaFunction<T = any> = (object: T) => boolean;
 
-export type VariableType = "string" | "function" | "number" | "boolean" | "object" | "undefined" | "symbol" | "bigint";
+export type VariableType = 'string' | 'function' | 'number' | 'boolean' | 'object' | 'undefined' | 'symbol' | 'bigint';
 
-export type iso3166_1_alpha_2 = 'AD' | 'AE' | 'AF' | 'AG' | 'AI' | 'AL' | 'AM' | 'AO' | 'AQ' | 'AR' | 'AS' | 'AT' | 'AU' | 'AW' | 'AX' | 'AZ' | 'BA' | 'BB' | 'BD' | 'BE' | 'BF' | 'BG' | 'BH' | 'BI' | 'BJ' | 'BL' | 'BM' | 'BN' | 'BO' | 'BQ' | 'BR' | 'BS' | 'BT' | 'BV' | 'BW' | 'BY' | 'BZ' | 'CA' | 'CC' | 'CD' | 'CF' | 'CG' | 'CH' | 'CI' | 'CK' | 'CL' | 'CM' | 'CN' | 'CO' | 'CR' | 'CU' | 'CV' | 'CW' | 'CX' | 'CY' | 'CZ' | 'DE' | 'DJ' | 'DK' | 'DM' | 'DO' | 'DZ' | 'EC' | 'EE' | 'EG' | 'EH' | 'ER' | 'ES' | 'ET' | 'FI' | 'FJ' | 'FK' | 'FM' | 'FO' | 'FR' | 'GA' | 'GB' | 'GD' | 'GE' | 'GF' | 'GG' | 'GH' | 'GI' | 'GL' | 'GM' | 'GN' | 'GP' | 'GQ' | 'GR' | 'GS' | 'GT' | 'GU' | 'GW' | 'GY' | 'HK' | 'HM' | 'HN' | 'HR' | 'HT' | 'HU' | 'ID' | 'IE' | 'IL' | 'IM' | 'IN' | 'IO' | 'IQ' | 'IR' | 'IS' | 'IT' | 'JE' | 'JM' | 'JO' | 'JP' | 'KE' | 'KG' | 'KH' | 'KI' | 'KM' | 'KN' | 'KP' | 'KR' | 'KW' | 'KY' | 'KZ' | 'LA' | 'LB' | 'LC' | 'LI' | 'LK' | 'LR' | 'LS' | 'LT' | 'LU' | 'LV' | 'LY' | 'MA' | 'MC' | 'MD' | 'ME' | 'MF' | 'MG' | 'MH' | 'MK' | 'ML' | 'MM' | 'MN' | 'MO' | 'MP' | 'MQ' | 'MR' | 'MS' | 'MT' | 'MU' | 'MV' | 'MW' | 'MX' | 'MY' | 'MZ' | 'NA' | 'NC' | 'NE' | 'NF' | 'NG' | 'NI' | 'NL' | 'NO' | 'NP' | 'NR' | 'NU' | 'NZ' | 'OM' | 'PA' | 'PE' | 'PF' | 'PG' | 'PH' | 'PK' | 'PL' | 'PM' | 'PN' | 'PR' | 'PS' | 'PT' | 'PW' | 'PY' | 'QA' | 'RE' | 'RO' | 'RS' | 'RU' | 'RW' | 'SA' | 'SB' | 'SC' | 'SD' | 'SE' | 'SG' | 'SH' | 'SI' | 'SJ' | 'SK' | 'SL' | 'SM' | 'SN' | 'SO' | 'SR' | 'SS' | 'ST' | 'SV' | 'SX' | 'SY' | 'SZ' | 'TC' | 'TD' | 'TF' | 'TG' | 'TH' | 'TJ' | 'TK' | 'TL' | 'TM' | 'TN' | 'TO' | 'TR' | 'TT' | 'TV' | 'TW' | 'TZ' | 'UA' | 'UG' | 'UM' | 'US' | 'UY' | 'UZ' | 'VA' | 'VC' | 'VE' | 'VG' | 'VI' | 'VN' | 'VU' | 'WF' | 'WS' | 'YE' | 'YT' | 'ZA' | 'ZM' | 'ZW';
+export type iso3166_1_alpha_2 =
+    | 'AD'
+    | 'AE'
+    | 'AF'
+    | 'AG'
+    | 'AI'
+    | 'AL'
+    | 'AM'
+    | 'AO'
+    | 'AQ'
+    | 'AR'
+    | 'AS'
+    | 'AT'
+    | 'AU'
+    | 'AW'
+    | 'AX'
+    | 'AZ'
+    | 'BA'
+    | 'BB'
+    | 'BD'
+    | 'BE'
+    | 'BF'
+    | 'BG'
+    | 'BH'
+    | 'BI'
+    | 'BJ'
+    | 'BL'
+    | 'BM'
+    | 'BN'
+    | 'BO'
+    | 'BQ'
+    | 'BR'
+    | 'BS'
+    | 'BT'
+    | 'BV'
+    | 'BW'
+    | 'BY'
+    | 'BZ'
+    | 'CA'
+    | 'CC'
+    | 'CD'
+    | 'CF'
+    | 'CG'
+    | 'CH'
+    | 'CI'
+    | 'CK'
+    | 'CL'
+    | 'CM'
+    | 'CN'
+    | 'CO'
+    | 'CR'
+    | 'CU'
+    | 'CV'
+    | 'CW'
+    | 'CX'
+    | 'CY'
+    | 'CZ'
+    | 'DE'
+    | 'DJ'
+    | 'DK'
+    | 'DM'
+    | 'DO'
+    | 'DZ'
+    | 'EC'
+    | 'EE'
+    | 'EG'
+    | 'EH'
+    | 'ER'
+    | 'ES'
+    | 'ET'
+    | 'FI'
+    | 'FJ'
+    | 'FK'
+    | 'FM'
+    | 'FO'
+    | 'FR'
+    | 'GA'
+    | 'GB'
+    | 'GD'
+    | 'GE'
+    | 'GF'
+    | 'GG'
+    | 'GH'
+    | 'GI'
+    | 'GL'
+    | 'GM'
+    | 'GN'
+    | 'GP'
+    | 'GQ'
+    | 'GR'
+    | 'GS'
+    | 'GT'
+    | 'GU'
+    | 'GW'
+    | 'GY'
+    | 'HK'
+    | 'HM'
+    | 'HN'
+    | 'HR'
+    | 'HT'
+    | 'HU'
+    | 'ID'
+    | 'IE'
+    | 'IL'
+    | 'IM'
+    | 'IN'
+    | 'IO'
+    | 'IQ'
+    | 'IR'
+    | 'IS'
+    | 'IT'
+    | 'JE'
+    | 'JM'
+    | 'JO'
+    | 'JP'
+    | 'KE'
+    | 'KG'
+    | 'KH'
+    | 'KI'
+    | 'KM'
+    | 'KN'
+    | 'KP'
+    | 'KR'
+    | 'KW'
+    | 'KY'
+    | 'KZ'
+    | 'LA'
+    | 'LB'
+    | 'LC'
+    | 'LI'
+    | 'LK'
+    | 'LR'
+    | 'LS'
+    | 'LT'
+    | 'LU'
+    | 'LV'
+    | 'LY'
+    | 'MA'
+    | 'MC'
+    | 'MD'
+    | 'ME'
+    | 'MF'
+    | 'MG'
+    | 'MH'
+    | 'MK'
+    | 'ML'
+    | 'MM'
+    | 'MN'
+    | 'MO'
+    | 'MP'
+    | 'MQ'
+    | 'MR'
+    | 'MS'
+    | 'MT'
+    | 'MU'
+    | 'MV'
+    | 'MW'
+    | 'MX'
+    | 'MY'
+    | 'MZ'
+    | 'NA'
+    | 'NC'
+    | 'NE'
+    | 'NF'
+    | 'NG'
+    | 'NI'
+    | 'NL'
+    | 'NO'
+    | 'NP'
+    | 'NR'
+    | 'NU'
+    | 'NZ'
+    | 'OM'
+    | 'PA'
+    | 'PE'
+    | 'PF'
+    | 'PG'
+    | 'PH'
+    | 'PK'
+    | 'PL'
+    | 'PM'
+    | 'PN'
+    | 'PR'
+    | 'PS'
+    | 'PT'
+    | 'PW'
+    | 'PY'
+    | 'QA'
+    | 'RE'
+    | 'RO'
+    | 'RS'
+    | 'RU'
+    | 'RW'
+    | 'SA'
+    | 'SB'
+    | 'SC'
+    | 'SD'
+    | 'SE'
+    | 'SG'
+    | 'SH'
+    | 'SI'
+    | 'SJ'
+    | 'SK'
+    | 'SL'
+    | 'SM'
+    | 'SN'
+    | 'SO'
+    | 'SR'
+    | 'SS'
+    | 'ST'
+    | 'SV'
+    | 'SX'
+    | 'SY'
+    | 'SZ'
+    | 'TC'
+    | 'TD'
+    | 'TF'
+    | 'TG'
+    | 'TH'
+    | 'TJ'
+    | 'TK'
+    | 'TL'
+    | 'TM'
+    | 'TN'
+    | 'TO'
+    | 'TR'
+    | 'TT'
+    | 'TV'
+    | 'TW'
+    | 'TZ'
+    | 'UA'
+    | 'UG'
+    | 'UM'
+    | 'US'
+    | 'UY'
+    | 'UZ'
+    | 'VA'
+    | 'VC'
+    | 'VE'
+    | 'VG'
+    | 'VI'
+    | 'VN'
+    | 'VU'
+    | 'WF'
+    | 'WS'
+    | 'YE'
+    | 'YT'
+    | 'ZA'
+    | 'ZM'
+    | 'ZW';
 export type iso3166_1_alpha_2_lwr = Lowercase<iso3166_1_alpha_2>;
 
-export type iso639_language_codes = 'ab' | 'aa' | 'af' | 'ak' | 'sq' | 'am' | 'ar' | 'an' | 'hy' | 'as' | 'av' | 'ae' | 'ay' | 'az' | 'bm' | 'ba' | 'eu' | 'be' | 'bn' | 'bi' | 'bs' | 'br' | 'bg' | 'my' | 'ca' | 'ch' | 'ce' | 'ny' | 'zh' | 'cu' | 'cv' | 'kw' | 'co' | 'cr' | 'hr' | 'cs' | 'da' | 'dv' | 'nl' | 'dz' | 'en' | 'eo' | 'et' | 'ee' | 'fo' | 'fj' | 'fi' | 'fr' | 'fy' | 'ff' | 'gd' | 'gl' | 'lg' | 'ka' | 'de' | 'el' | 'kl' | 'gn' | 'gu' | 'ht' | 'ha' | 'he' | 'hz' | 'hi' | 'ho' | 'hu' | 'is' | 'io' | 'ig' | 'id' | 'ia' | 'ie' | 'iu' | 'ik' | 'ga' | 'it' | 'ja' | 'jv' | 'kn' | 'kr' | 'ks' | 'kk' | 'km' | 'ki' | 'rw' | 'ky' | 'kv' | 'kg' | 'ko' | 'kj' | 'ku' | 'lo' | 'la' | 'lv' | 'li' | 'ln' | 'lt' | 'lu' | 'lb' | 'mk' | 'mg' | 'ms' | 'ml' | 'mt' | 'gv' | 'mi' | 'mr' | 'mh' | 'mn' | 'na' | 'nv' | 'nd' | 'nr' | 'ng' | 'ne' | 'no' | 'nb' | 'nn' | 'oc' | 'oj' | 'or' | 'om' | 'os' | 'pi' | 'ps' | 'fa' | 'pl' | 'pt' | 'pa' | 'qu' | 'ro' | 'rm' | 'rn' | 'ru' | 'se' | 'sm' | 'sg' | 'sa' | 'sc' | 'sr' | 'sn' | 'sd' | 'si' | 'sk' | 'sl' | 'so' | 'st' | 'es' | 'su' | 'sw' | 'ss' | 'sv' | 'tl' | 'ty' | 'tg' | 'ta' | 'tt' | 'te' | 'th' | 'bo' | 'ti' | 'to' | 'ts' | 'tn' | 'tr' | 'tk' | 'tw' | 'ug' | 'uk' | 'ur' | 'uz' | 've' | 'vi' | 'vo' | 'wa' | 'cy' | 'wo' | 'xh' | 'ii' | 'yi' | 'yo' | 'za' | 'zu';
+export type iso639_language_codes =
+    | 'ab'
+    | 'aa'
+    | 'af'
+    | 'ak'
+    | 'sq'
+    | 'am'
+    | 'ar'
+    | 'an'
+    | 'hy'
+    | 'as'
+    | 'av'
+    | 'ae'
+    | 'ay'
+    | 'az'
+    | 'bm'
+    | 'ba'
+    | 'eu'
+    | 'be'
+    | 'bn'
+    | 'bi'
+    | 'bs'
+    | 'br'
+    | 'bg'
+    | 'my'
+    | 'ca'
+    | 'ch'
+    | 'ce'
+    | 'ny'
+    | 'zh'
+    | 'cu'
+    | 'cv'
+    | 'kw'
+    | 'co'
+    | 'cr'
+    | 'hr'
+    | 'cs'
+    | 'da'
+    | 'dv'
+    | 'nl'
+    | 'dz'
+    | 'en'
+    | 'eo'
+    | 'et'
+    | 'ee'
+    | 'fo'
+    | 'fj'
+    | 'fi'
+    | 'fr'
+    | 'fy'
+    | 'ff'
+    | 'gd'
+    | 'gl'
+    | 'lg'
+    | 'ka'
+    | 'de'
+    | 'el'
+    | 'kl'
+    | 'gn'
+    | 'gu'
+    | 'ht'
+    | 'ha'
+    | 'he'
+    | 'hz'
+    | 'hi'
+    | 'ho'
+    | 'hu'
+    | 'is'
+    | 'io'
+    | 'ig'
+    | 'id'
+    | 'ia'
+    | 'ie'
+    | 'iu'
+    | 'ik'
+    | 'ga'
+    | 'it'
+    | 'ja'
+    | 'jv'
+    | 'kn'
+    | 'kr'
+    | 'ks'
+    | 'kk'
+    | 'km'
+    | 'ki'
+    | 'rw'
+    | 'ky'
+    | 'kv'
+    | 'kg'
+    | 'ko'
+    | 'kj'
+    | 'ku'
+    | 'lo'
+    | 'la'
+    | 'lv'
+    | 'li'
+    | 'ln'
+    | 'lt'
+    | 'lu'
+    | 'lb'
+    | 'mk'
+    | 'mg'
+    | 'ms'
+    | 'ml'
+    | 'mt'
+    | 'gv'
+    | 'mi'
+    | 'mr'
+    | 'mh'
+    | 'mn'
+    | 'na'
+    | 'nv'
+    | 'nd'
+    | 'nr'
+    | 'ng'
+    | 'ne'
+    | 'no'
+    | 'nb'
+    | 'nn'
+    | 'oc'
+    | 'oj'
+    | 'or'
+    | 'om'
+    | 'os'
+    | 'pi'
+    | 'ps'
+    | 'fa'
+    | 'pl'
+    | 'pt'
+    | 'pa'
+    | 'qu'
+    | 'ro'
+    | 'rm'
+    | 'rn'
+    | 'ru'
+    | 'se'
+    | 'sm'
+    | 'sg'
+    | 'sa'
+    | 'sc'
+    | 'sr'
+    | 'sn'
+    | 'sd'
+    | 'si'
+    | 'sk'
+    | 'sl'
+    | 'so'
+    | 'st'
+    | 'es'
+    | 'su'
+    | 'sw'
+    | 'ss'
+    | 'sv'
+    | 'tl'
+    | 'ty'
+    | 'tg'
+    | 'ta'
+    | 'tt'
+    | 'te'
+    | 'th'
+    | 'bo'
+    | 'ti'
+    | 'to'
+    | 'ts'
+    | 'tn'
+    | 'tr'
+    | 'tk'
+    | 'tw'
+    | 'ug'
+    | 'uk'
+    | 'ur'
+    | 'uz'
+    | 've'
+    | 'vi'
+    | 'vo'
+    | 'wa'
+    | 'cy'
+    | 'wo'
+    | 'xh'
+    | 'ii'
+    | 'yi'
+    | 'yo'
+    | 'za'
+    | 'zu';
 export type iso639_language_codes_upr = Uppercase<iso639_language_codes>;
