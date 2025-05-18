@@ -27,8 +27,10 @@ export const linkedinSecret = process.env.LINKEDIN_SECRET;
 
 export const rapidapiKey = process.env.RAPIDAPI_KEY;
 
-export const port = process.env.PORT ?? 3000;
+export const port = process.env.PORT ? Number(process.env.PORT) : 3000;
 export const origin = process.env.RENDER_EXTERNAL_URL || `http://localhost:${port}`;
+
+export const updateInterval = process.env.UPDATE_INTERVAL ? Number(process.env.UPDATE_INTERVAL) : 60000;
 
 export const gifExtension = 'gif';
 export const videoExtensions = ['mp4', 'mkv', 'avi', 'mov', 'wmv', 'flv', 'webm'];

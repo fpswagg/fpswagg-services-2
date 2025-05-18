@@ -1,9 +1,9 @@
 import { JsonValue } from '@prisma/client/runtime/library';
 
-import db from 'src/utils/database';
+import db, { prisma } from 'src/utils/database';
 import { Scheduler as IScheduler, Schedule as ISchedule } from 'src/utils/types';
 
-export interface ScheduleFromDB {
+export interface ScheduleFromDB<T = JsonValue> {
     id: number;
     schedulerId: string;
     creationTime: Date;
@@ -11,12 +11,15 @@ export interface ScheduleFromDB {
     posted: boolean;
     webhook: string | null;
     content: string;
-    details: JsonValue;
+    details: T;
 }
 
-export interface SchedulerFromDB {
+export interface SchedulerWithoutSchedulesFromDB {
     id: string;
     detailedName: string;
+}
+
+export interface SchedulerFromDB extends SchedulerWithoutSchedulesFromDB {
     schedules: ScheduleFromDB[];
 }
 
@@ -89,6 +92,10 @@ export class Schedule implements ISchedule {
         this._initialized = false;
         await this._initialize();
         return this;
+    }
+
+    public async original(include = true) {
+        return prisma.schedule.findUnique({ where: { id: this._id }, include: { scheduler: include } });
     }
 
     public async update<T extends keyof Omit<ScheduleFromDB, 'id'>>(key: T, value: ScheduleFromDB[T]) {
@@ -288,6 +295,10 @@ export class Scheduler implements IScheduler {
         this._initialized = false;
         await this._initialize();
         return this;
+    }
+
+    public async original(include = true) {
+        return prisma.scheduler.findUnique({ where: { id: this._id }, include: { schedules: include } });
     }
 
     public async update<T extends keyof Omit<SchedulerFromDB, 'id'>>(key: T, value: SchedulerFromDB[T]) {

@@ -1,5 +1,6 @@
 import { Request } from 'express';
 import { User } from '@supabase/supabase-js';
+import { ScheduleFromDB, SchedulerWithoutSchedulesFromDB } from 'src/api/idggaf/scheduler';
 
 export interface AppRequest extends Request {
     user?: User;
@@ -20,6 +21,15 @@ export interface Schedule {
     webhook?: string;
     content: string;
     details: Record<string, any>;
+}
+
+export interface ScheduleWebhookResponse {
+    posted?: boolean;
+    details?: Record<string, any>;
+    reschedule?: string | number;
+    update?: Omit<ScheduleFromDB<Record<string, any>>, 'id'>;
+    'update scheduler'?: Omit<SchedulerWithoutSchedulesFromDB, 'id'>;
+    update_scheduler?: Omit<SchedulerWithoutSchedulesFromDB, 'id'>;
 }
 
 export type NumberPostType = string;
