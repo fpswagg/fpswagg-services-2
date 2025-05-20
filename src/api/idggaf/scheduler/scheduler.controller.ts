@@ -1,5 +1,6 @@
-import { Controller, Get, Post, Put, Delete, Param, Res, Body } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Req, Res, Body } from '@nestjs/common';
 import { Response } from 'express';
+import { AppRequest } from 'src/utils/types';
 
 import { Scheduler } from './.';
 
@@ -14,9 +15,15 @@ export class SchedulerEditInput {
 @Controller('scheduler')
 export class SchedulerController {
     @Get(':scheduler')
-    async scheduler(@Param('scheduler') _scheduler: string, @Res() res: Response) {
+    async scheduler(@Param('scheduler') _scheduler: string, @Req() req: AppRequest, @Res() res: Response) {
         try {
             const scheduler = await Scheduler.load(_scheduler);
+
+            if (
+                !req.admin &&
+                (!scheduler.author.startsWith('user:') || req.user?.id !== scheduler.author.substring('user:'.length))
+            )
+                return res.status(401).json({ error: new Error('Unauthorized') });
 
             return res.status(200).json({ result: scheduler });
         } catch (error: unknown) {
@@ -27,9 +34,18 @@ export class SchedulerController {
     }
 
     @Post(':scheduler')
-    async addScheduler(@Param('scheduler') _scheduler: string, @Body() body: SchedulerInput, @Res() res: Response) {
+    async addScheduler(
+        @Param('scheduler') _scheduler: string,
+        @Body() body: SchedulerInput,
+        @Req() req: AppRequest,
+        @Res() res: Response,
+    ) {
         try {
-            const scheduler = await Scheduler.make(_scheduler, body.detailedName);
+            const scheduler = await Scheduler.make(
+                _scheduler,
+                body.detailedName,
+                req.user ? `user:${req.user.id}` : 'system:admin',
+            );
 
             return res.status(200).json({ result: scheduler });
         } catch (error: unknown) {
@@ -43,10 +59,17 @@ export class SchedulerController {
     async editScheduler(
         @Param('scheduler') _scheduler: string,
         @Body() body: SchedulerEditInput,
+        @Req() req: AppRequest,
         @Res() res: Response,
     ) {
         try {
             const scheduler = await Scheduler.load(_scheduler);
+
+            if (
+                !req.admin &&
+                (!scheduler.author.startsWith('user:') || req.user?.id !== scheduler.author.substring('user:'.length))
+            )
+                return res.status(401).json({ error: new Error('Unauthorized') });
 
             await scheduler.wait();
 
@@ -63,9 +86,15 @@ export class SchedulerController {
     }
 
     @Delete(':scheduler')
-    async deleteScheduler(@Param('scheduler') _scheduler: string, @Res() res: Response) {
+    async deleteScheduler(@Param('scheduler') _scheduler: string, @Res() req: AppRequest, @Res() res: Response) {
         try {
             const scheduler = await Scheduler.load(_scheduler);
+
+            if (
+                !req.admin &&
+                (!scheduler.author.startsWith('user:') || req.user?.id !== scheduler.author.substring('user:'.length))
+            )
+                return res.status(401).json({ error: new Error('Unauthorized') });
 
             return res.status(200).json({ result: await scheduler.delete() });
         } catch (error: unknown) {

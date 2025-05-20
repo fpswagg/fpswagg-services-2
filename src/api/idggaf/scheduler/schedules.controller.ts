@@ -2,6 +2,7 @@ import { Controller, Get, Post, Put, Delete, Param, Res, Body, Query, BadRequest
 import { Response } from 'express';
 
 import { Schedule, Scheduler } from '.';
+import { AppRequest } from 'src/utils/types';
 
 export class ScheduleInput {
     toPostAt: string | number;
@@ -22,9 +23,17 @@ export class ScheduleEditInput {
 @Controller('schedules')
 export class SchedulesController {
     @Get(':scheduler')
-    async schedules(@Param('scheduler') scheduler: string, @Query('id') _id: string, @Res() res: Response) {
+    async schedules(
+        @Param('scheduler') scheduler: string,
+        @Query('id') _id: string,
+        @Res() req: AppRequest,
+        @Res() res: Response,
+    ) {
         try {
-            const { schedules } = await Scheduler.load(scheduler);
+            const { schedules, author } = await Scheduler.load(scheduler);
+
+            if (!req.admin && (!author.startsWith('user:') || req.user?.id !== author.substring('user:'.length)))
+                return res.status(401).json({ error: new Error('Unauthorized') });
 
             const id = _id ? parseInt(_id) : undefined;
 
@@ -38,9 +47,20 @@ export class SchedulesController {
     }
 
     @Post(':scheduler')
-    async addSchedule(@Param('scheduler') _scheduler: string, @Body() body: ScheduleInput, @Res() res: Response) {
+    async addSchedule(
+        @Param('scheduler') _scheduler: string,
+        @Body() body: ScheduleInput,
+        @Res() req: AppRequest,
+        @Res() res: Response,
+    ) {
         try {
             const scheduler = await Scheduler.load(_scheduler);
+            if (
+                !req.admin &&
+                (!scheduler.author.startsWith('user:') || req.user?.id !== scheduler.author.substring('user:'.length))
+            )
+                return res.status(401).json({ error: new Error('Unauthorized') });
+
             const schedule = await scheduler.makeSchedule(
                 new Date(body.toPostAt),
                 body.content,
@@ -57,13 +77,24 @@ export class SchedulesController {
     }
 
     @Put(':id')
-    async editSchedule(@Param('id') _id: string, @Body() body: ScheduleEditInput, @Res() res: Response) {
+    async editSchedule(
+        @Param('id') _id: string,
+        @Body() body: ScheduleEditInput,
+        @Res() req: AppRequest,
+        @Res() res: Response,
+    ) {
         try {
             const id = parseInt(_id);
 
             if (isNaN(id)) throw new BadRequestException('Invalid id!');
 
-            const schedule = await Schedule.load(id);
+            const { schedule, scheduler } = await Schedule.loadWithParent(id);
+
+            if (
+                !req.admin &&
+                (!scheduler.author.startsWith('user:') || req.user?.id !== scheduler.author.substring('user:'.length))
+            )
+                return res.status(401).json({ error: new Error('Unauthorized') });
 
             await schedule.wait();
 
@@ -85,13 +116,19 @@ export class SchedulesController {
     }
 
     @Delete(':id')
-    async deleteSchedule(@Param('id') _id: string, @Res() res: Response) {
+    async deleteSchedule(@Param('id') _id: string, @Res() req: AppRequest, @Res() res: Response) {
         try {
             const id = parseInt(_id);
 
             if (isNaN(id)) throw new BadRequestException('Invalid id!');
 
-            const schedule = await Schedule.load(id);
+            const { schedule, scheduler } = await Schedule.loadWithParent(id);
+
+            if (
+                !req.admin &&
+                (!scheduler.author.startsWith('user:') || req.user?.id !== scheduler.author.substring('user:'.length))
+            )
+                return res.status(401).json({ error: new Error('Unauthorized') });
 
             return res.status(200).json({ result: await schedule.delete() });
         } catch (error: unknown) {

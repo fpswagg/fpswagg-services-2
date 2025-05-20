@@ -1,7 +1,8 @@
-import { Controller, Get, Query, Post, Body, Res, BadRequestException } from '@nestjs/common';
+import { Controller, Get, Query, Post, Body, Res, BadRequestException, Req } from '@nestjs/common';
 import { Response } from 'express';
 
 import bank from './.';
+import { AppRequest } from 'src/utils/types';
 
 export class PushInput {
     number: string;
@@ -23,7 +24,9 @@ export class PushPostInput {
 @Controller({ path: '/number' })
 export class NumberController {
     @Get('/fetch')
-    async fetch(@Query('id') id: string, @Res() res: Response) {
+    async fetch(@Query('id') id: string, @Req() req: AppRequest, @Res() res: Response) {
+        if (!req.admin) return res.status(401).json({ error: new Error('Unauthorized!') });
+
         try {
             if (!id) throw new BadRequestException('No id!');
 
@@ -40,7 +43,9 @@ export class NumberController {
     }
 
     @Post('/push')
-    async push(@Body() pushData: PushInput, @Res() res: Response) {
+    async push(@Body() pushData: PushInput, @Req() req: AppRequest, @Res() res: Response) {
+        if (!req.admin) return res.status(401).json({ error: new Error('Unauthorized!') });
+
         try {
             return res.status(200).json({
                 result: await bank.instance.push(
@@ -59,7 +64,9 @@ export class NumberController {
     }
 
     @Get('/post')
-    async fetchPost(@Query('id') id: string, @Res() res: Response) {
+    async fetchPost(@Query('id') id: string, @Req() req: AppRequest, @Res() res: Response) {
+        if (!req.admin) return res.status(401).json({ error: new Error('Unauthorized!') });
+
         try {
             if (!id) throw new BadRequestException('No id!');
 
@@ -80,7 +87,9 @@ export class NumberController {
     }
 
     @Post('/post')
-    async pushPost(@Body() pushData: PushPostInput, @Res() res: Response) {
+    async pushPost(@Body() pushData: PushPostInput, @Req() req: AppRequest, @Res() res: Response) {
+        if (!req.admin) return res.status(401).json({ error: new Error('Unauthorized!') });
+
         try {
             return res.status(200).json({
                 result: await bank.instance.pushPost({

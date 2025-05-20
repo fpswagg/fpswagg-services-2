@@ -17,6 +17,7 @@ export interface ScheduleFromDB<T = JsonValue> {
 export interface SchedulerWithoutSchedulesFromDB {
     id: string;
     detailedName: string;
+    author: string;
 }
 
 export interface SchedulerFromDB extends SchedulerWithoutSchedulesFromDB {
@@ -240,6 +241,19 @@ export class Schedule implements ISchedule {
         return schedule;
     }
 
+    public static async loadWithParent(id: number) {
+        const raw = await prisma.scheduler.findFirstOrThrow({
+            where: { schedules: { some: { id } } },
+            include: { schedules: true },
+        });
+        const scheduler = new Scheduler(raw);
+        const schedule = scheduler.schedules.find((s) => s.id === id);
+
+        if (!schedule) throw new Error('No schedule!');
+
+        return { schedule, scheduler };
+    }
+
     public static async make(
         scheduler: Scheduler,
         toPostAt: Date,
@@ -261,6 +275,7 @@ export class Schedule implements ISchedule {
 export class Scheduler implements IScheduler {
     private _id: string;
     private _detailedName?: string;
+    private _author?: string;
     private _schedules?: Schedule[];
 
     private _initPromise?: Promise<void>;
@@ -327,6 +342,7 @@ export class Scheduler implements IScheduler {
 
     private _load(data: SchedulerFromDB) {
         this._detailedName = data.detailedName;
+        this._author = data.author;
         this._schedules = data.schedules.map((data) => new Schedule(data));
 
         this._initialized = true;
@@ -371,6 +387,24 @@ export class Scheduler implements IScheduler {
         );
     }
 
+    public get author() {
+        if (!this._initialized) this._notInitedError();
+
+        return this._author!;
+    }
+
+    public set author(author: string) {
+        if (!this._initialized) this._notInitedError();
+
+        this._pendingPromises.push(
+            (async () => {
+                await this.update('author', author);
+
+                this._author = author;
+            })(),
+        );
+    }
+
     public get schedules() {
         if (!this._initialized) this._notInitedError();
 
@@ -400,8 +434,8 @@ export class Scheduler implements IScheduler {
         return scheduler;
     }
 
-    public static async make(id: string, detailedName: string) {
-        const data = await db.scheduler.create({ data: { id, detailedName }, include: { schedules: true } });
+    public static async make(id: string, detailedName: string, author?: string) {
+        const data = await db.scheduler.create({ data: { id, detailedName, author }, include: { schedules: true } });
         const scheduler = new Scheduler(data);
 
         return scheduler;

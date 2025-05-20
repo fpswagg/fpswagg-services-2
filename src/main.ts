@@ -12,6 +12,8 @@ import axios from 'axios';
 import { ScheduleWebhookResponse } from './utils/types';
 import FoodBank from './api/banks/food';
 
+import * as services from './services';
+
 function asyncUpdate(func: () => Promise<any> = async () => {}, update = updateInterval) {
     let flag = false;
 
@@ -25,8 +27,11 @@ function asyncUpdate(func: () => Promise<any> = async () => {}, update = updateI
     }, update);
 }
 
-// eslint-disable-next-line @typescript-eslint/require-await
 async function initialize() {
+    await services.startServices();
+
+    asyncUpdate(services.updateServices);
+
     // Schedule updates
     asyncUpdate(async function () {
         const schedulers = (await prisma.scheduler.findMany({ include: { schedules: true } })).map(
