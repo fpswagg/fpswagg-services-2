@@ -1,2 +1,2 @@
-GET http://localhost:3000/fetcher/redgifs/gifs?niche=ebony
-Authorization: Admin admin
+GET https://fpswagg-services-65dj.onrender.com/schedulers
+Authorization: Admin d62a1716420c4ef0afbbcc31e974a826

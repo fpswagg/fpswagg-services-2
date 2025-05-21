@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Res } from '@nestjs/common';
+import { Controller, Get, Post, Body, Res } from '@nestjs/common';
 import { Response } from 'express';
 
 import supabase from 'src/utils/supabase';
@@ -23,6 +23,11 @@ export class ResetPasswordData {
 
 @Controller('auth')
 export class AuthController {
+    @Get('test')
+    test() {
+        return 'OK';
+    }
+
     @Post('token')
     async generateToken(@Body() { email, password }: UserData, @Res() res: Response) {
         try {
