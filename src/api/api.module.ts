@@ -14,7 +14,7 @@ export class ApiModule implements NestModule {
     configure(consumer: MiddlewareConsumer) {
         consumer
             .apply(AuthMiddleware)
-            .exclude({ path: 'auth/:any*', method: RequestMethod.ALL })
+            .exclude({ path: 'auth/*path', method: RequestMethod.ALL })
             .forRoutes({ path: '*', method: RequestMethod.ALL });
     }
 }
