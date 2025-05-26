@@ -1,7 +1,7 @@
 import { BadRequestException, Controller, Get, Query, Res } from '@nestjs/common';
 import { Response } from 'express';
 
-import { JSearchSearchParam, JSearchDetailsParam } from 'src/utils/types';
+import { JSearchSearchParam, JSearchDetailsParam } from '@fpswagg/my-database/types';
 
 import JSearch from './job_search';
 import * as Reddit from './reddit';

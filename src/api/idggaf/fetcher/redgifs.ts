@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import { CriteriaFunction, RedgifGIF, RedgifUrlData } from 'src/utils/types';
+import { CriteriaFunction, RedgifGIF, RedgifUrlData } from '@fpswagg/my-database/types';
 
 export async function authenticate(): Promise<string> {
     const response = await axios.get<{ token: string }>('https://api.redgifs.com/v2/auth/temporary');

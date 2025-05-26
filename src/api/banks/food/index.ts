@@ -1,8 +1,7 @@
 import axios from 'axios';
 
-import db from 'src/utils/database';
-import { RawMeal, Meal, Ingredient } from 'src/utils/types';
-import { parseMeal } from 'src/utils/functions';
+import { RawMeal, Meal } from '@fpswagg/my-database/types';
+import { createMeal, deleteMeal, getMealById, parseMeal, updateMeal } from '@fpswagg/my-database/functions';
 
 export default class FoodBank {
     private static _instance: FoodBank | null = null;
@@ -69,94 +68,4 @@ export async function themealdbRandom() {
     const meal = response.data.meals[0];
 
     return parseMeal(meal);
-}
-
-export async function createMeal(meal: Meal) {
-    return await db.meal.create({
-        data: {
-            ...meal,
-            dateModified: meal.dateModified ? new Date(meal.dateModified) : null,
-            ingredients: { create: meal.ingredients },
-        },
-        include: { ingredients: true },
-    });
-}
-
-export async function getMealById(id: string) {
-    return await db.meal.findUnique({
-        where: { id },
-        include: { ingredients: true },
-    });
-}
-
-export async function updateMeal(id: string, meal: Omit<Partial<Meal>, 'id'>) {
-    const { ingredients, ...mealData } = meal;
-
-    return await db.meal.update({
-        where: { id },
-        data: {
-            ...mealData,
-            ingredients: ingredients
-                ? {
-                      deleteMany: {},
-                      create: ingredients,
-                  }
-                : undefined,
-        },
-        include: { ingredients: true },
-    });
-}
-
-export async function deleteMeal(id: string) {
-    await clearIngredients(id);
-    return await db.meal.delete({ where: { id }, include: { ingredients: true } });
-}
-
-export async function createIngredient(ingredient: Ingredient, mealId: string) {
-    return await db.ingredient.create({
-        data: {
-            ...ingredient,
-            mealId,
-        },
-        include: { meal: true },
-    });
-}
-
-export async function getIngredient(id: number) {
-    return await getIngredientById(id);
-}
-
-export async function getIngredientById(id: number) {
-    return await db.ingredient.findUnique({ where: { id }, include: { meal: true } });
-}
-
-export async function getIngredients(mealId: string) {
-    return await getIngredientsByMealId(mealId);
-}
-
-export async function getIngredientsByMealId(mealId: string) {
-    return await db.ingredient.findMany({ where: { mealId } });
-}
-
-export async function updateIngredient(id: number, data: Partial<Ingredient>) {
-    return await db.ingredient.update({ where: { id }, data, include: { meal: true } });
-}
-
-export async function updateIngredients(mealId: string, data: Partial<Ingredient>) {
-    return await db.ingredient.updateMany({ where: { mealId }, data });
-}
-
-export async function deleteIngredient(id: number) {
-    return await db.ingredient.delete({
-        where: { id },
-        include: { meal: true },
-    });
-}
-
-export async function clearIngredients(mealId?: string) {
-    if (mealId === undefined) return await db.ingredient.deleteMany();
-    else
-        return await db.ingredient.deleteMany({
-            where: { mealId },
-        });
 }

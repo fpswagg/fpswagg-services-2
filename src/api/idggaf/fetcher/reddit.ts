@@ -1,8 +1,8 @@
 import axios from 'axios';
 import * as qs from 'qs';
 
-import { RedditPost } from 'src/utils/types';
-import { minutes, wait } from 'src/utils/functions';
+import { RedditPost } from '@fpswagg/my-database/types';
+import { minutes, wait } from '@fpswagg/my-database/functions';
 import { redditAppName, redditID, redditSecret } from 'src/utils/variables';
 
 export type PostType = 'hot' | 'new' | 'top' | 'rising' | 'controversial';

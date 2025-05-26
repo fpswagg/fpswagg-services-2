@@ -1,7 +1,16 @@
-import { JsonValue } from '@prisma/client/runtime/library';
-
-import db from 'src/utils/database';
-import { NumberRecord, NumberPost } from 'src/utils/types';
+import { NumberRecord, NumberPost } from '@fpswagg/my-database/types';
+import {
+    turnRecordFromDB,
+    createNumber,
+    getNumber,
+    updateNumber,
+    deleteNumber,
+    createPost,
+    getPostById,
+    turnPostFromDB,
+    updatePost,
+    deletePost,
+} from '@fpswagg/my-database/functions';
 
 export default class NumberBank {
     private static _instance: NumberBank | null = null;
@@ -75,100 +84,4 @@ export default class NumberBank {
 
         return data;
     }
-}
-
-export type NumberRecordDB = {
-    id: string;
-    source: string;
-    keywords: string[];
-    saved_as: string | null;
-    reason: string | null;
-    discussionFrequency: number | null;
-};
-
-export type NumberPostDB = {
-    id: number;
-    number_id: string;
-    time: Date;
-    post_type: string;
-    destination_id: string;
-    sender_id: string;
-    content: JsonValue;
-};
-
-export function turnRecordFromDB(data: NumberRecordDB | null): NumberRecord | null {
-    return (
-        data && {
-            ...data,
-            saved_as: data.saved_as || undefined,
-            reason: data.reason || undefined,
-            discussionFrequency: data.discussionFrequency ?? undefined,
-        }
-    );
-}
-
-export function turnPostFromDB(data: NumberPostDB | null): NumberPost | null {
-    return (
-        data && {
-            ...data,
-            content: (typeof data.content === 'object' && data.content) || {},
-        }
-    );
-}
-
-export async function createNumber(numberRecord: NumberRecord) {
-    return await db.numberRecord.create({ data: numberRecord, include: { posts: true } });
-}
-
-export async function getNumber(id: string) {
-    return await db.numberRecord.findUnique({ where: { id }, include: { posts: true } });
-}
-
-export async function updateNumber(id: string, data: Omit<Partial<NumberRecord>, 'id'>) {
-    return await db.numberRecord.update({ where: { id }, data, include: { posts: true } });
-}
-
-export async function deleteNumber(id: string) {
-    await db.numberPost.deleteMany({ where: { number_id: id } });
-    await db.numberRecord.delete({ where: { id } });
-}
-
-export async function createPost(post: Omit<NumberPost, 'id'>) {
-    return await db.numberPost.create({ data: post, include: { number: true } });
-}
-
-export async function getPost(id: number) {
-    return await getPostById(id);
-}
-
-export async function getPostById(id: number) {
-    return await db.numberPost.findUnique({ where: { id }, include: { number: true } });
-}
-
-export async function getPosts(number_id: string) {
-    return await getPostsByNumber(number_id);
-}
-
-export async function getPostsByNumber(number_id: string) {
-    return await db.numberPost.findMany({ where: { number_id }, include: { number: true } });
-}
-
-export async function updatePost(id: number, data: Omit<Partial<NumberPost>, 'id'>) {
-    return await db.numberPost.update({ where: { id }, data, include: { number: true } });
-}
-
-export async function updatePosts(number_id: string, data: Omit<Partial<NumberPost>, 'id'>) {
-    return await db.numberPost.updateMany({ where: { number_id }, data });
-}
-
-export async function deletePost(id: number) {
-    return await db.numberPost.delete({ where: { id }, include: { number: true } });
-}
-
-export async function clearPosts(number_id?: string) {
-    if (number_id === undefined) return await db.numberPost.deleteMany();
-    else
-        return await db.numberPost.deleteMany({
-            where: { number_id },
-        });
 }

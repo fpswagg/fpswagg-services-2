@@ -7,9 +7,9 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 
 import * as path from 'path';
 import Scheduler from './api/idggaf/scheduler';
-import prisma from './utils/database';
+import prisma from '@fpswagg/my-database/database';
 import axios from 'axios';
-import { ScheduleWebhookResponse } from './utils/types';
+import { ScheduleWebhookResponse } from '@fpswagg/my-database/types';
 import FoodBank from './api/banks/food';
 
 import * as services from './services';

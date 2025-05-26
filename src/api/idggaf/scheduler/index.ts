@@ -1,28 +1,10 @@
-import { JsonValue } from '@prisma/client/runtime/library';
-
-import db, { prisma } from 'src/utils/database';
-import { Scheduler as IScheduler, Schedule as ISchedule } from 'src/utils/types';
-
-export interface ScheduleFromDB<T = JsonValue> {
-    id: number;
-    schedulerId: string;
-    creationTime: Date;
-    toPostAt: Date;
-    posted: boolean;
-    webhook: string | null;
-    content: string;
-    details: T;
-}
-
-export interface SchedulerWithoutSchedulesFromDB {
-    id: string;
-    detailedName: string;
-    author: string;
-}
-
-export interface SchedulerFromDB extends SchedulerWithoutSchedulesFromDB {
-    schedules: ScheduleFromDB[];
-}
+import db, { prisma } from '@fpswagg/my-database/database';
+import {
+    Scheduler as IScheduler,
+    Schedule as ISchedule,
+    ScheduleFromDB,
+    SchedulerFromDB,
+} from '@fpswagg/my-database/types';
 
 export class Schedule implements ISchedule {
     private _id: number;

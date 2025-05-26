@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import { JSearchJobData, JSearchJobDetails, JSearchSearchParam, JSearchDetailsParam } from 'src/utils/types';
+import { JSearchJobData, JSearchJobDetails, JSearchSearchParam, JSearchDetailsParam } from '@fpswagg/my-database/types';
 import { rapidapiKey } from 'src/utils/variables';
 
 export class JSearch {

@@ -11,6 +11,9 @@ export class AuthMiddleware implements NestMiddleware {
     async use(req: AppRequest, res: Response, next: NextFunction) {
         console.log(`[${req.method}] ${req.originalUrl}`);
 
+        req.admin = false;
+        req.user = null;
+
         const authHeader = req.headers['authorization'] || req.headers['Authorization'];
 
         const bearerToken =
