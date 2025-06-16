@@ -1,4 +1,4 @@
-import db, { prisma } from '@fpswagg/my-database/database';
+import db, { prisma } from '@fpswagg/my-database';
 import {
     Scheduler as IScheduler,
     Schedule as ISchedule,

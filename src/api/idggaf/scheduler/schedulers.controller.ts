@@ -1,7 +1,7 @@
 import { Controller, Get, Req, Res } from '@nestjs/common';
 import { Response } from 'express';
 
-import db from '@fpswagg/my-database/database';
+import db from '@fpswagg/my-database';
 import { AppRequest } from 'src/utils/types';
 
 import { Scheduler } from './.';

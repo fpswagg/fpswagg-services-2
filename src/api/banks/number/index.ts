@@ -10,7 +10,7 @@ import {
     turnPostFromDB,
     updatePost,
     deletePost,
-} from '@fpswagg/my-database/functions';
+} from 'src/utils/functions';
 
 export default class NumberBank {
     private static _instance: NumberBank | null = null;

@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 import { RawMeal, Meal } from '@fpswagg/my-database/types';
-import { createMeal, deleteMeal, getMealById, parseMeal, updateMeal } from '@fpswagg/my-database/functions';
+import { createMeal, deleteMeal, getMealById, parseMeal, updateMeal } from 'src/utils/functions';
 
 export default class FoodBank {
     private static _instance: FoodBank | null = null;
